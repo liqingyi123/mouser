@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Canvas鼠标绘制线条特效</title>
+        <style>
+            body {
+                margin: 0;
+                background: url(./bg.jpg) no-repeat 100% 100%;
+            }
+            p{
+                color: white;font-size: 20px;padding-left: 20px;
+            }
+			div{
+				cursor: pointer;color: #23AAF2;font-weight: bold;font-size: 25px;
+			}
+        </style>
+    </head>
+    <body>
+        <div onclick="changeMouser()">点我切换鼠标特效</div>
+		<p>
+			mouser-lqy.js<br>
+			&lt;script src="js/mouser-lqy.min.js" type="text/javascript" charset="utf-8"&gt;&lt;/script&gt;<br>
+			或者<br>
+			import 'js/mouser-lqy.min.js';<br>
+			<br>
+			let mouserModel = 1, mouser;<br>
+            mouser = new Mouser({<br>
+			&emsp;&emsp;drawType: mouserModel,<br>
+			&emsp;&emsp;leaveAutoer: false,<br>
+			&emsp;&emsp;showTime: 15,<br>
+			&emsp;&emsp;maxWidth: 8,<br>
+			&emsp;&emsp;minWidth: 8,<br>
+			})<br>
+			function changeMouser(){<br>
+			&emsp;&emsp;mouserModel = mouserModel === 1 ? 2 : 1;<br>
+			&emsp;&emsp;document.title = `Canvas绘制鼠标${mouserModel === 1 ? '线条' : '星星'}特效`;<br>
+			&emsp;&emsp;const option = mouserModel === 1 ? {<br>
+			&emsp;&emsp;&emsp;&emsp;drawType: mouserModel, //1彩色线条<br>
+			&emsp;&emsp;&emsp;&emsp;leaveAutoer: false, //鼠标移出后自动绘制 drawType为1时生效<br>
+			&emsp;&emsp;&emsp;&emsp;showTime: 15, //绘制的线条显示的时间 drawType为1时生效<br>
+			&emsp;&emsp;&emsp;&emsp;maxWidth: 8, //最大宽度 drawType为1时生效<br>
+			&emsp;&emsp;&emsp;&emsp;minWidth: 8, //最小宽度 drawType为1时生效<br>
+			&emsp;&emsp;} : {<br>
+			&emsp;&emsp;&emsp;&emsp;drawType: mouserModel, //1彩色线条 2星星<br>
+			&emsp;&emsp;&emsp;&emsp;color: '#F8EC85',//颜色 drawType为2时生效<br>
+			&emsp;&emsp;};<br>
+			&emsp;&emsp;mouser.changeModel(option);<br>
+			}
+		</p>
+        <script src="js/mouser-lqy.min.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript">
+			let mouserModel = 1, mouser;
+            mouser = new Mouser({
+				drawType: mouserModel,
+				leaveAutoer: false,
+				showTime: 15,
+				maxWidth: 8,
+				minWidth: 8,
+			})
+			function changeMouser(){
+				mouserModel = mouserModel === 1 ? 2 : 1;
+				document.title = `Canvas绘制鼠标${mouserModel === 1 ? '线条' : '星星'}特效`;
+				const option = mouserModel === 1 ? {
+					drawType: mouserModel, //1彩色线条
+					leaveAutoer: false, //鼠标移出后自动绘制 drawType为1时生效
+					showTime: 15, //绘制的线条显示的时间 drawType为1时生效
+					maxWidth: 8, //最大宽度 drawType为1时生效
+					minWidth: 8, //最小宽度 drawType为1时生效
+				} : {
+					drawType: mouserModel, //1彩色线条 2星星
+					color: '#F8EC85',//颜色 drawType为2时生效
+				};
+				mouser.changeModel(option);
+			}
+        </script>
+    </body>
+</html>
