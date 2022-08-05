@@ -73,3 +73,10 @@ function changeMouser(type) {
     });
 }
 ```
+
+#### 效果
+!['跳动的彩色线条'](https://www.weblqy.top/work/mdStatic/mouser/1.jpg '跳动的彩色线条')
+!['金闪闪'](https://www.weblqy.top/work/mdStatic/mouser/2.jpg '金闪闪')
+!['大数据专用'](https://www.weblqy.top/work/mdStatic/mouser/3.jpg '大数据专用')
+!['街头涂鸦'](https://www.weblqy.top/work/mdStatic/mouser/4.jpg '街头涂鸦')
+!['连线点阵'](https://www.weblqy.top/work/mdStatic/mouser/5.jpg '连线点阵')
