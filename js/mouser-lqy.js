@@ -15,14 +15,15 @@
  */
 ;
 (function(window, document) {
-    let _this, defaults = {
-        drawType: 1, //1跳动的彩色线条 2亮晶晶
+    let _this,
+      defaults = {
+        drawType: 1, //1跳动的彩色线条 2金闪闪 3大数据专用 4街头涂鸦 5连线点阵
         leaveAutoer: true, //鼠标移出后自动绘制 drawType为1时生效
         showTime: 20, //绘制的线条显示的时间 drawType为1时生效
         maxWidth: 20, //最大宽度 drawType为1时生效
         minWidth: 5, //最小宽度 drawType为1时生效
-        color: '#F8EC85', //颜色 drawType为2时生效
-    };
+        color: "#F8EC85", //颜色 drawType为2时生效
+      };
     let width = window.innerWidth,
         height = window.innerHeight;
     let mouser = function(options) {
