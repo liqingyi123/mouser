@@ -26,21 +26,18 @@
     let width = window.innerWidth,
         height = window.innerHeight;
     let mouser = function(options) {
-        this.options = Object.assign(defaults, options);
-        this.init();
+        _this = this;
+        _this.options = Object.assign(defaults, options);
+        _this.init();
     };
     mouser.prototype = {
-        init: function() {
-            _this = this
-            _this.createDom();
-        },
         changeModel: function(option) {
-            this.options = Object.assign(this.options, option);
+            _this.options = Object.assign(_this.options, option);
             document.getElementById("mouser-style").remove();
             document.getElementById("mouser").remove();
-            this.createDom();
+            _this.init();
         },
-        createDom: function() {
+        init: function() {
             //设置样式
             const cssStr = `body{width:100vw;min-height:100vh;padding:0;margin:0;}`;
             let style = document.createElement("style");
@@ -68,7 +65,6 @@
                 canvas.height = height;
                 canvas.clipContent = false; //当子项目的边界超出此容器时，显示子项目在此容器中。
                 function resize() {
-                    console.log('reset')
                     width = window.innerWidth;
                     height = window.innerHeight;
                     canvas.width = width;
