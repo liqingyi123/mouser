@@ -5,38 +5,46 @@
  * Q Q：1787750205
  * 使用示例：
     new Mouser({
-        drawType: 2, //1跳动的彩色线条 2亮晶晶
-        leaveAutoer: false, //鼠标移出后自动绘制 drawType为1时生效
-        showTime: 15, //绘制的线条显示的时间 drawType为1时生效
-        maxWidth: 12, //最大宽度 drawType为1时生效
-        minWidth: 6, //最小宽度 drawType为1时生效
-        color: '#17F5D9',//颜色 drawType为2时生效
+        drawType: 2,
+        leaveAutoer: false,
+        showTime: 15,
+        maxWidth: 12,
+        minWidth: 6
     })
  */
 ;
 (function(window, document) {
-    let _this,
+    let $$this,
       defaults = {
         drawType: 1, //1跳动的彩色线条 2金闪闪 3大数据专用 4街头涂鸦 5连线点阵
         leaveAutoer: true, //鼠标移出后自动绘制 drawType为1时生效
         showTime: 20, //绘制的线条显示的时间 drawType为1时生效
-        maxWidth: 20, //最大宽度 drawType为1时生效
-        minWidth: 5, //最小宽度 drawType为1时生效
-        color: "#F8EC85", //颜色 drawType为2时生效
+        maxWidth: 20, //最大宽度 drawType为1时生效，默认值20
+        minWidth: 5, //最小宽度 drawType为1时生效，默认值5
+        color: "", //颜色 drawType为2和5时生效 2默认值#F8EC85、5默认值#A5FBFF
+        dotColor: '',//点的颜色 drawType为3时生效，默认值#9CD9F9
+        lineColor: '',//线的颜色 drawType为3时生效，默认值#9CD9F9
+        number: 0,//点的数量 drawType为5时生效，默认值8000
       };
     let width = window.innerWidth,
         height = window.innerHeight;
     let mouser = function(options) {
-        _this = this;
-        _this.options = Object.assign(defaults, options);
-        _this.init();
+        $$this = this;
+        $$this.options = Object.assign(defaults, options);
+        $$this.init();
     };
     mouser.prototype = {
         changeModel: function(option) {
-            _this.options = Object.assign(_this.options, option);
+            $$this.options = Object.assign($$this.options, option);
             document.getElementById("mouser-style").remove();
             document.getElementById("mouser").remove();
-            _this.init();
+            $$this.init();
+        },
+        hexToRgb: function(hex) {
+            return 'rgb(' + parseInt('0x' + hex.slice(1, 3)) + ',' + parseInt('0x' + hex.slice(3, 5)) + ',' + parseInt('0x' + hex.slice(5, 7)) + ')';
+        },
+        hexToRgba: function(hex,opacity) {
+            return 'rgba(' + parseInt('0x' + hex.slice(1, 3)) + ',' + parseInt('0x' + hex.slice(3, 5)) + ',' + parseInt('0x' + hex.slice(5, 7)) + ',' + opacity + ')';
         },
         init: function() {
             //设置样式
@@ -47,7 +55,7 @@
             style.innerHTML = cssStr;
             document.getElementsByTagName("head").item(0).appendChild(style);
             //创建画布
-            if(_this.options.drawType === 4){
+            if($$this.options.drawType === 4){
                 let domSvgBox = document.createElement("div");
                 domSvgBox.id = 'mouser';
                 domSvgBox.style = 'position: fixed; top: 0px; left: 0px; width: 100vw; height: 100vh; z-index: 2147483647; pointer-events: none;';
@@ -73,7 +81,7 @@
                 }
                 window.addEventListener('resize', resize);
             }
-            switch (_this.options.drawType) {
+            switch ($$this.options.drawType) {
                 case 1: //跳动的彩色线条
                     let body = [];
                     let mouse_pos_x = canvas.width / 2;
@@ -82,19 +90,19 @@
                     let step = 0;
                     let loop = 0;
                     let line = 0;
-                    let lineMax = _this.options.maxWidth;
-                    let lineMin = _this.options.minWidth;
+                    let lineMax = $$this.options.maxWidth;
+                    let lineMin = $$this.options.minWidth;
                     let TWO_PI = 2 * Math.PI;
                     let t = 0;
                     let animate = true;
                     let op = 1;
-                    let bodyLength = _this.options.showTime;
+                    let bodyLength = $$this.options.showTime;
                     document.body.addEventListener('mouseleave', mouse_leave);
                     document.body.addEventListener('mousemove', mouse_track);
                     // canvas.addEventListener('mouseleave', mouse_leave);
                     // canvas.addEventListener('mousemove', mouse_track);
                     function mouse_leave() {
-                        if (_this.options.leaveAutoer) {
+                        if ($$this.options.leaveAutoer) {
                             animate = true;
                         } else {
                             animate = false;
@@ -356,7 +364,7 @@
                     }();;
                     let Index = function() {
                         let v = new Stage("mouser"),
-                            m = new Twinkle(_this.options.color, 14, 1);
+                            m = new Twinkle($$this.options.color || "#F8EC85", 14, 1);
                         m.mouse.update(0, 0), document.body.addEventListener('mousemove', function(e) {
                             // console.log(e.clientX, e.clientY)
                             m.mouse.update(e.clientX, e.clientY)
@@ -423,8 +431,7 @@
                                 }
                                 // assign a circle to each point
                                 for (let i in points) {
-                                    let c = new Circle(points[i], 2 + Math.random() * 2,
-                                        'rgba(255,255,255,0.3)');
+                                    let c = new Circle(points[i], 2 + Math.random() * 2, 'rgba(255,255,255,0.3)');
                                     points[i].circle = c;
                                 }
                             }
@@ -510,7 +517,8 @@
                                     ctx.beginPath();
                                     ctx.moveTo(p.x, p.y);
                                     ctx.lineTo(p.closest[i].x, p.closest[i].y);
-                                    ctx.strokeStyle = 'rgba(156,217,249,' + p.active + ')';
+                                    // ctx.strokeStyle = `rgba(${$$this.options?.lineColor||'156,217,249'},${p.active})`;
+                                    ctx.strokeStyle = $$this.hexToRgba($$this.options?.lineColor||'#9CD9F9', p.active);
                                     ctx.stroke();
                                 }
                             }
@@ -527,8 +535,8 @@
                                     ctx.beginPath();
                                     ctx.arc(_this.pos.x, _this.pos.y, _this.radius, 0,
                                         2 * Math.PI, false);
-                                    ctx.fillStyle = 'rgba(156,217,249,' + _this.active +
-                                        ')';
+                                    // ctx.fillStyle = `rgba(${$$this.options?.dotColor||'156,217,249'},${_this.active})`;
+                                    ctx.fillStyle = $$this.hexToRgba($$this.options?.dotColor||'#9CD9F9', _this.active);
                                     ctx.fill();
                                 };
                             }
@@ -774,7 +782,7 @@
                             y: y,
                             xa: xa,
                             ya: ya,
-                            max: 6000
+                            max: $$this.options.number || 8000
                         })
                     }
                     // 延迟100秒开始执行动画，如果立即执行有时位置计算会出错
@@ -817,7 +825,8 @@
                                     // 画线
                                     ctx.beginPath();
                                     ctx.lineWidth = ratio / 2;
-                                    ctx.strokeStyle = 'rgba(165,251,255,' + (ratio + 0.2) + ')';
+                                    // ctx.strokeStyle = `rgba(${$$this.options.color || '165,251,255'},${ratio + 0.2})`;
+                                    ctx.strokeStyle = $$this.hexToRgba($$this.options.color || '#A5FBFF', ratio + 0.2);
                                     ctx.moveTo(dot.x, dot.y);
                                     ctx.lineTo(d2.x, d2.y);
                                     ctx.stroke();

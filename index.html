@@ -30,17 +30,16 @@
         <div onclick="changeMouser(3)">切换鼠标特效-大数据</div>
         <div onclick="changeMouser(4)">切换鼠标特效-街头涂鸦</div>
         <div onclick="changeMouser(5)">切换鼠标特效-连线点阵</div>
-        <!-- <script src="js/mouser-spt/TweenMax.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="js/mouser-spt/Rx.min.js"></script> -->
+        <!-- <script src="js/mouser-lqy.js" type="text/javascript" charset="utf-8"></script> -->
         <script src="js/mouser-lqy.min.js" type="text/javascript" charset="utf-8"></script>
         <script type="text/javascript">
-            let mouserModel = 1,
+            let mouserModel = 4,
                 mouser;
             const mouseModels = {
                 1: {
                     title: '彩色线条',
                     options: {
-                        leaveAutoer: false, //鼠标移出后自动绘制 drawType为1时生效
+                        leaveAutoer: true, //鼠标移出后自动绘制 drawType为1时生效
                         showTime: 20, //绘制的线条显示的时间 drawType为1时生效
                         maxWidth: 12, //最大宽度 drawType为1时生效
                         minWidth: 4, //最小宽度 drawType为1时生效
@@ -49,12 +48,15 @@
                 2: {
                     title: '金闪闪',
                     options: {
-                        color: '#F8EC85', //颜色 drawType为2时生效
+                        color: '#F8EC85', //颜色 drawType为2、5时生效，默认值#F8EC85
                     }
                 },
                 3: {
                     title: '大数据',
-                    options: {}
+                    options: {
+                        dotColor: '#F22323',//#9CD9F9
+                        lineColor: '#F2EC23'//#9CD9F9
+                    }
                 },
                 4: {
                     title: '街头涂鸦',
@@ -62,7 +64,10 @@
                 },
                 5: {
                     title: '连线点阵',
-                    options: {}
+                    options: {
+                        color: '#FFF300',//颜色 drawType为2、5时生效 默认值#A5FBFF
+                        number: 10000//8000
+                    }
                 }
             }
             mouser = new Mouser({
