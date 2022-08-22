@@ -1,14 +1,20 @@
-# mouser
+# mouser 
+
+### author: 猿某人
+### QQ: 1787750205
 
 #### 介绍
 鼠标特效库，简单几行代码就可实现华丽的鼠标拖尾特效
 
 #### 菜单（改变drawType）
-1. 跳动的彩色线条
-2. 金闪闪
+1. 躁动线条
+2. 绚丽流星
 3. 大数据专用
 4. 街头涂鸦
 5. 连线点阵
+6. 萤火之光
+7. 多彩烟花
+8. 放大镜
 
 #### 火候及调料
 | 字段 | 默认值 | 说明 |
@@ -21,7 +27,10 @@
 | color | 2默认值#F8EC85<br>5默认值#A5FBFF | 星星的颜色(drawType为2和5时生效) |
 | dotColor | #9CD9F9 | 点的颜色(drawType为3时生效) |
 | lineColor | #9CD9F9 | 线的颜色(drawType为3时生效) |
-| number | 8000 | 点的数量(drawType为时生效) |
+| number | 8000 | 点的数量(drawType为5时生效) |
+| colors | ['#FF1461', '#18FF92', '#5A87FF', '#FBF38C'] | 礼花颜色(drawType为7时生效) |
+| multi | 1.5 | 放大倍率(drawType为8时生效) |
+| border | null | 放大镜镜框(drawType为8时生效) |
 
 #### 烹调方式
 ```js
@@ -62,6 +71,26 @@ const mouseModels = {
         options: {
             color: '#FFF300',
             number: 10000
+        }
+    },
+    6: {
+        title: '萤火之光',
+        options: {}
+    },
+    7: {
+        title: '多彩烟花',
+        options: {
+            colors: ['#FF1461', '#18FF92', '#5A87FF', '#FBF38C']
+        }
+    },
+    8: {
+        title: '放大镜',
+        options: {
+            multi: 1.5,
+            border: {
+                width: 10,
+                color: '#069'
+            }
         }
     }
 }

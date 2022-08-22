@@ -24,7 +24,10 @@
         color: "", //颜色 drawType为2和5时生效 2默认值#F8EC85、5默认值#A5FBFF
         dotColor: '',//点的颜色 drawType为3时生效，默认值#9CD9F9
         lineColor: '',//线的颜色 drawType为3时生效，默认值#9CD9F9
-        number: 0,//点的数量 drawType为5时生效，默认值8000
+        number: 0,//点的数量 drawType为5时生效，默认值8000,
+        colors: ['#FF1461', '#18FF92', '#5A87FF', '#FBF38C'],//礼花颜色
+        multi: 1.5,//放大倍率
+        border: null
       };
     let width = window.innerWidth,
         height = window.innerHeight;
@@ -67,12 +70,17 @@
                 domCanvas.style =
                     "position: fixed;top: 0;left: 0;width: 100%;height: 100%;z-index: 999;pointer-events: none;";
                 document.body.appendChild(domCanvas);
-                // document.writeln(`<canvas id="mouser" style="position: fixed;top: 0;left: 0;width: 100%;height: 100%;z-index: 999;pointer-events: none;"></canvas>`);
                 var canvas = document.getElementById("mouser")
                 var ctx = canvas.getContext("2d");
                 canvas.width = width;
                 canvas.height = height;
                 canvas.clipContent = false; //当子项目的边界超出此容器时，显示子项目在此容器中。
+                if($$this.options.drawType === 8){
+                    let childCanvas = document.createElement("canvas");
+                    childCanvas.id = "offCanvas";
+                    childCanvas.style = "position: fixed;top: 0;left: 0;width: 100%;height: 100%;z-index: 99;pointer-events: none;";
+                    document.body.appendChild(childCanvas);
+                }
                 function resize() {
                     width = window.innerWidth;
                     height = window.innerHeight;
@@ -838,6 +846,327 @@
                         });
                         RAF(animate5);
                     }
+                    break;
+                case 6:
+                    window.requestAnimFrame = (function() {
+                        return window.requestAnimationFrame ||
+                            window.webkitRequestAnimationFrame ||
+                            window.mozRequestAnimationFrame ||
+                            function(callback) {
+                                window.setTimeout(callback, 1000 / 60);
+                            };
+                    })();
+                    let mouse = {
+                        x: canvas.width / 2,
+                        y: canvas.height / 2
+                    };
+                    let flames = [];
+                
+                    /**
+                     * Flame shapes constructor
+                     */
+                    let Flame = function() {
+                        function flame() {
+                            this.radius = 10;
+                            this.delete = false;
+                            this.position = {
+                                x: mouse.x + ((Math.random() > 0 ? 1 : -1) * Math.random() * 5),
+                                y: mouse.y
+                            };
+                        }
+                
+                        flame.prototype.Draw = function(ctx) {
+                            if (this.radius > 0) {
+                                ctx.beginPath();
+                                ctx.fillStyle = "rgb(256," + (250 - this.radius * 12) + ",0)";
+                                ctx.arc(this.position.x, this.position.y - 3 - 30 + this.radius * 3, this.radius, 0, Math.PI * 2, true);
+                                ctx.closePath();
+                                ctx.fill();
+                
+                                this.radius--;
+                            } else {
+                                this.delete = true;
+                            }
+                        };
+                
+                        return new flame();
+                    };
+                
+                
+                    /**
+                     * Update mouse coordinates on moving
+                     */
+                    document.addEventListener('mousemove', function(event) {
+                        mouse.x = event.clientX;
+                        mouse.y = event.clientY;
+                    });
+                
+                    /**
+                     * Redraw canvas
+                     */
+                    function Update() {
+                        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                
+                        // Draw background
+                        ctx.beginPath();
+                        ctx.fillStyle = "rgba(0,0,0,0)";
+                        ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                        ctx.closePath();
+                        ctx.fill();
+                
+                        // Draw highlight
+                        let grad = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 200);
+                        grad.addColorStop(0, "rgba(255,163,0,0.5)");
+                        grad.addColorStop(1, "rgba(255,216,148,0)");
+                        ctx.beginPath();
+                        ctx.arc(mouse.x, mouse.y, 200, 0, Math.PI * 2, true);
+                        ctx.fillStyle = grad;
+                        ctx.closePath();
+                        ctx.fill();
+                
+                        // Draw flames
+                        for (let i = 0; i < flames.length; i++) {
+                            if (flames[i].delete) {
+                                flames.splice(i, 1);
+                                flames.push(new Flame());
+                            } else {
+                                flames[i].Draw(ctx);
+                            }
+                        }
+                
+                        window.requestAnimFrame(Update);
+                    }
+                
+                    // Start drawing
+                    for (let i = 0; i < 10; i++) {
+                        flames[i] = new Flame();
+                    }
+                    Update();
+                    break;
+                case 7:
+                    import('./mouser-spt/anime.js').then(() => {
+                        window.human = false;
+                        let numberOfParticules = 30;
+                        let pointerX = 0;
+                        let pointerY = 0;
+                        let tap = ('ontouchstart' in window || navigator.msMaxTouchPoints) ? 'touchstart' : 'mousedown';
+                        let colors = $$this.options.colors;
+                        
+                        function setCanvasSize() {
+                            canvas.width = window.innerWidth * 2;
+                            canvas.height = window.innerHeight * 2;
+                            canvas.style.width = window.innerWidth + 'px';
+                            canvas.style.height = window.innerHeight + 'px';
+                            canvas.getContext('2d').scale(2, 2);
+                        }
+                        
+                        function updateCoords(e) {
+                            pointerX = e.clientX || e.touches[0].clientX;
+                            pointerY = e.clientY || e.touches[0].clientY;
+                        }
+                        
+                        function setParticuleDirection(p) {
+                            let angle = anime.random(0, 360) * Math.PI / 180;
+                            let value = anime.random(50, 180);
+                            let radius = [-1, 1][anime.random(0, 1)] * value;
+                            return {
+                                x: p.x + radius * Math.cos(angle),
+                                y: p.y + radius * Math.sin(angle)
+                            }
+                        }
+                        
+                        function createParticule(x,y) {
+                            let p = {};
+                            p.x = x;
+                            p.y = y;
+                            p.color = colors[anime.random(0, colors.length - 1)];
+                            p.radius = anime.random(16, 32);
+                            p.endPos = setParticuleDirection(p);
+                            p.draw = function() {
+                                ctx.beginPath();
+                                ctx.arc(p.x, p.y, p.radius, 0, 2 * Math.PI, true);
+                                ctx.fillStyle = p.color;
+                                ctx.fill();
+                            }
+                            return p;
+                        }
+                        
+                        function createCircle(x,y) {
+                            let p = {};
+                            p.x = x;
+                            p.y = y;
+                            p.color = '#FFF';
+                            p.radius = 0.1;
+                            p.alpha = .5;
+                            p.lineWidth = 6;
+                            p.draw = function() {
+                                ctx.globalAlpha = p.alpha;
+                                ctx.beginPath();
+                                ctx.arc(p.x, p.y, p.radius, 0, 2 * Math.PI, true);
+                                ctx.lineWidth = p.lineWidth;
+                                ctx.strokeStyle = p.color;
+                                ctx.stroke();
+                                ctx.globalAlpha = 1;
+                            }
+                            return p;
+                        }
+                        
+                        function renderParticule(anim) {
+                            for (let i = 0; i < anim.animatables.length; i++) {
+                                anim.animatables[i].target.draw();
+                            }
+                        }
+                        
+                        function animateParticules(x, y) {
+                            let circle = createCircle(x, y);
+                            let particules = [];
+                            for (let i = 0; i < numberOfParticules; i++) {
+                                particules.push(createParticule(x, y));
+                            }
+                            anime.timeline().add({
+                                targets: particules,
+                                x: function(p) { return p.endPos.x; },
+                                y: function(p) { return p.endPos.y; },
+                                radius: 0.1,
+                                duration: anime.random(1200, 1800),
+                                easing: 'easeOutExpo',
+                                update: renderParticule
+                            })
+                            .add({
+                                targets: circle,
+                                radius: anime.random(80, 160),
+                                lineWidth: 0,
+                                alpha: {
+                                    value: 0,
+                                    easing: 'linear',
+                                    duration: anime.random(600, 800),  
+                                },
+                                duration: anime.random(1200, 1800),
+                                easing: 'easeOutExpo',
+                                update: renderParticule,
+                                offset: 0
+                            });
+                        }
+                        
+                        let render = anime({
+                            duration: Infinity,
+                            update: function() {
+                                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                            }
+                        });
+                        
+                        document.addEventListener(tap, function(e) {
+                            window.human = true;
+                            render.play();
+                            updateCoords(e);
+                            animateParticules(pointerX, pointerY);
+                        }, false);
+                        
+                        let centerX = window.innerWidth / 2;
+                        let centerY = window.innerHeight / 2;
+                        
+                        function autoClick() {
+                            if (window.human) return;
+                            animateParticules(
+                                anime.random(centerX-50, centerX+50), 
+                                anime.random(centerY-50, centerY+50)
+                            );
+                            anime({duration: 200}).finished.then(autoClick);
+                        }
+                        
+                        autoClick();
+                        setCanvasSize();
+                        window.addEventListener('resize', setCanvasSize, false);
+                    })
+                    break;
+                case 8:
+                    import('./mouser-spt/dom-to-image.min.js').then(()=>{
+                        domtoimage.toPng(document.getElementById('app')).then((dataUrl) => {
+                            let offCanvas = document.getElementById('offCanvas');
+                            let offContext = offCanvas.getContext('2d');
+                            let image = new Image();
+                            let scale = 1.5;
+                            let isMouseDown = false;
+                            image.src = dataUrl;
+                            image.onload = function () {
+                                offCanvas.width = image.width * scale;
+                                offCanvas.height = image.height * scale;
+                                offContext.drawImage(image, 0, 0, offCanvas.width, offCanvas.height);
+                            }
+                        
+                            function windowToCanvas(x, y) {
+                                var bbox = canvas.getBoundingClientRect();
+                                return {
+                                    x: x - bbox.left,
+                                    y: y - bbox.top
+                                }
+                            }
+                        
+                            document.onmousedown = function (e) {
+                                e.preventDefault()
+                                isMouseDown = true;
+                                point = windowToCanvas(e.clientX, e.clientY);
+                                drawCanvasWithMagnifier(true, point)
+                            }
+                        
+                            document.onmouseup = function (e) {
+                                e.preventDefault()
+                                isMouseDown = false;
+                                drawCanvasWithMagnifier(false);
+                            }
+                        
+                            document.onmouseout = function (e) {
+                                e.preventDefault()
+                                isMouseDown = false
+                                drawCanvasWithMagnifier( false )
+                            }
+                        
+                            document.onmousemove = function (e) {
+                                e.preventDefault()
+                                if(isMouseDown){
+                                    point = windowToCanvas(e.clientX,e.clientY);
+                                    drawCanvasWithMagnifier(true,point);
+                                }
+                        
+                            }
+                        
+                            function drawCanvasWithMagnifier(isShowMagnifier, point) {
+                                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                                ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+                        
+                                if (isShowMagnifier) {
+                                    drawMagnifier(point);
+                                }
+                            }
+                        
+                            function drawMagnifier(point) {
+                                var mr = 200;
+                                //将缩小版图片上点击的位置映射到大图上
+                                var imageLG_cx = point.x*scale;
+                                var imageLG_cy = point.y*scale;
+                        
+                                //将大图上对应的点移动到圆心
+                                var sx = imageLG_cx - mr;
+                                var sy = imageLG_cy - mr;
+                        
+                                var dx = point.x - mr;
+                                var dy = point.y - mr;
+                        
+                                ctx.save();
+                                ctx.lineWidth = $$this.options.border?.width || 0;
+                                ctx.strokeStyle = $$this.options.border?.color || 'rgba(0,0,0,0)';
+                                ctx.beginPath();
+                                ctx.arc(point.x, point.y, mr,0, 2*Math.PI, false);
+                                ctx.stroke();
+                                ctx.clip();
+                                ctx.drawImage(offCanvas, sx, sy, 2*mr, 2*mr,dx,dy,2*mr,2*mr);
+                                ctx.closePath();
+                                ctx.restore();
+                            }
+                        }).catch(function (error) {
+                            console.error('oops, something went wrong!', error);
+                        });
+                    });
                     break;
                 default:
                     break;
