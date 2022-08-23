@@ -19,7 +19,7 @@
 #### 火候及调料
 | 字段 | 默认值 | 说明 |
 |:---:|:---:|:---|
-| drawType | 1 | 特效选择<br>1 跳动的彩色线条<br>2 金闪闪<br>3 大数据专用<br>4 街头涂鸦<br>5 连线点阵<br>6 萤火之光<br>7 多彩烟花<br>8 放大镜 |
+| drawType | 1 | 特效选择<br>1 躁动线条<br>2 绚丽流星<br>3 大数据专用<br>4 街头涂鸦<br>5 连线点阵<br>6 萤火之光<br>7 多彩烟花<br>8 放大镜 |
 | leaveAutoer | true | 鼠标移出后自动绘制(drawType为1时生效) |
 | showTime | 20 | 绘制的线条显示的时间(drawType为1时生效) |
 | maxWidth | 20 | 最大宽度(drawType为1时生效) |
@@ -33,11 +33,22 @@
 | border | null | 放大镜镜框(drawType为8时生效) |
 
 #### 烹调方式
-```js
-<script src="js/mouser-lqy.min.js" type="text/javascript" charset="utf-8"></script>
-// 或者
-import 'js/mouser-lqy.min.js';
+> npm方式
 
+```js
+npm i mouser-lqy -S
+import 'mouser-lqy';
+```
+> git下载方式
+
+```js
+<script src="mouser/index.js" type="text/javascript" charset="utf-8"></script>
+// 或者
+import 'mouser/index.js';
+```
+> 配置并生成鼠标特效，以及实时更换鼠标特效功能
+
+```js
 let mouserModel = 1, mouser;
 const mouseModels = {
     1: {
@@ -113,8 +124,11 @@ function changeMouser(type) {
 ```
 
 #### 效果
-!['跳动的彩色线条'](https://www.weblqy.top/work/mdStatic/mouser/1.jpg '跳动的彩色线条')
-!['金闪闪'](https://www.weblqy.top/work/mdStatic/mouser/2.jpg '金闪闪')
-!['大数据专用'](https://www.weblqy.top/work/mdStatic/mouser/3.jpg '大数据专用')
-!['街头涂鸦'](https://www.weblqy.top/work/mdStatic/mouser/4.jpg '街头涂鸦')
-!['连线点阵'](https://www.weblqy.top/work/mdStatic/mouser/5.jpg '连线点阵')
+!['躁动线条'](https://www.ymrlqy.top/work/mdStatic/mouser/1.jpg '躁动线条')
+!['绚丽流星'](https://www.ymrlqy.top/work/mdStatic/mouser/2.jpg '绚丽流星')
+!['大数据专用'](https://www.ymrlqy.top/work/mdStatic/mouser/3.jpg '大数据专用')
+!['街头涂鸦'](https://www.ymrlqy.top/work/mdStatic/mouser/4.jpg '街头涂鸦')
+!['连线点阵'](https://www.ymrlqy.top/work/mdStatic/mouser/5.jpg '连线点阵')
+!['萤火之光'](https://www.ymrlqy.top/work/mdStatic/mouser/6.jpg '萤火之光')
+!['多彩烟花'](https://www.ymrlqy.top/work/mdStatic/mouser/7.jpg '多彩烟花')
+!['放大镜'](https://www.ymrlqy.top/work/mdStatic/mouser/8.jpg '放大镜')

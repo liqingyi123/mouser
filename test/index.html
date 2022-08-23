@@ -9,7 +9,7 @@
                 padding: 0;
                 width: 100vw;
                 height: 100vh;
-                background: url(./bg.jpg) no-repeat 100% 100%;
+                background: linear-gradient(45deg, #001054,#0F00C4, #004B54, #00AFC4, #00541F,#00C476, #2F5400,#22C400, #543C00,#C49100, #542400,#C43500);
             }
 
             p {
@@ -20,7 +20,7 @@
 
             div {
                 cursor: pointer;
-                color: #23AAF2;
+                color: #fff;
                 font-weight: bold;
                 font-size: 22px;
                 box-sizing: border-box;
@@ -40,8 +40,8 @@
             <div onclick="changeMouser(7)">切换鼠标特效-多彩烟花</div>
             <div onclick="changeMouser(8)">切换鼠标特效-放大镜</div>
         </div>
-        <!-- <script src="js/mouser-lqy.js" type="text/javascript" charset="utf-8"></script> -->
-        <script src="js/mouser-lqy.min.js" type="text/javascript" charset="utf-8"></script>
+        <!-- <script src="../mouser-lqy.js" type="text/javascript" charset="utf-8"></script> -->
+        <script src="../index.js" type="text/javascript" charset="utf-8"></script>
         <script type="text/javascript">
             let mouserModel = 6,
                 mouser;
@@ -58,14 +58,14 @@
                 2: {
                     title: '绚丽流星',
                     options: {
-                        color: '#F8EC85', //颜色 drawType为2、5时生效，默认值#F8EC85
+                        // color: '#F8EC85', //颜色 drawType为2、5时生效，默认值#F8EC85
                     }
                 },
                 3: {
                     title: '大数据',
                     options: {
-                        dotColor: '#F22323',//#9CD9F9
-                        lineColor: '#F2EC23'//#9CD9F9
+                        // dotColor: '#F22323',//#9CD9F9
+                        // lineColor: '#F2EC23'//#9CD9F9
                     }
                 },
                 4: {
@@ -75,8 +75,8 @@
                 5: {
                     title: '连线点阵',
                     options: {
-                        color: '#FFF300',//颜色 drawType为2、5时生效 默认值#A5FBFF
-                        number: 10000//8000
+                        // color: '#FFF300',//颜色 drawType为2、5时生效 默认值#A5FBFF
+                        // number: 10000//8000
                     }
                 },
                 6: {
@@ -86,17 +86,17 @@
                 7: {
                     title: '多彩烟花',
                     options: {
-                        colors: ['#FF1461', '#18FF92', '#5A87FF', '#FBF38C']
+                        // colors: ['#FF1461', '#18FF92', '#5A87FF', '#FBF38C']
                     }
                 },
                 8: {
                     title: '放大镜',
                     options: {
                         multi: 1.5,
-                        border: {
-                            width: 10,
-                            color: '#069'
-                        }
+                        // border: {
+                        //     width: 10,
+                        //     color: '#069'
+                        // }
                     }
                 }
             }
