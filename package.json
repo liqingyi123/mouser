@@ -1,6 +1,6 @@
 {
   "name": "mouser-lqy",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "鼠标特效库，简单几行代码就可实现华丽的鼠标拖尾特效",
   "main": "index.js",
   "scripts": {

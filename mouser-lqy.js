@@ -27,6 +27,7 @@
         number: 0,//点的数量 drawType为5时生效，默认值8000,
         colors: ['#FF1461', '#18FF92', '#5A87FF', '#FBF38C'],//礼花颜色
         multi: 1.5,//放大倍率
+        multiDom: null,//需要放大的dom节点对象
         border: null
       };
     let width = window.innerWidth,
@@ -48,6 +49,18 @@
         },
         hexToRgba: function(hex,opacity) {
             return 'rgba(' + parseInt('0x' + hex.slice(1, 3)) + ',' + parseInt('0x' + hex.slice(3, 5)) + ',' + parseInt('0x' + hex.slice(5, 7)) + ',' + opacity + ')';
+        },
+        //验证画布是否为空
+        isCanvasBlank: function(canvas) {
+            var blank = document.createElement('canvas');//系统获取一个空canvas对象
+            blank.width = canvas.width;
+            blank.height = canvas.height;
+            return canvas.toDataURL() == blank.toDataURL();//比较值相等则为空
+        },
+        //判断dom中是否包含某个子节点或者标签
+        isInDom: function (node, father = document.body, isNode = true) {
+            if (isNode) return (node === father) ? false : father.contains(node);
+            else father.getElementsByTagName(node).length ? true : false;
         },
         init: function() {
             //设置样式
@@ -78,7 +91,7 @@
                 if($$this.options.drawType === 8){
                     let childCanvas = document.createElement("canvas");
                     childCanvas.id = "offCanvas";
-                    childCanvas.style = "position: fixed;top: 0;left: 0;width: 100%;height: 100%;z-index: 99;pointer-events: none;";
+                    childCanvas.style = "position: fixed;top: 200vh;left: 200vw;width: 100%;height: 100%;z-index: -1;";
                     document.body.appendChild(childCanvas);
                 }
                 function resize() {
@@ -383,8 +396,8 @@
                     break;
                 case 3:
                     let largeHeader, points, target, animateHeader = true;
-                    import('./mouser-spt/TweenLite.min.js').then(() => {
-                        import('./mouser-spt/EasePack.min.js').then(() => {
+                    import('./lib/TweenLite.min.js').then(() => {
+                        import('./lib/EasePack.min.js').then(() => {
                             initHeader();
                             initAnimation();
                             addListeners();
@@ -556,8 +569,8 @@
                     })
                     break;
                 case 4:
-                    import('./mouser-spt/TweenMax.min.js').then(() => {
-                        import('./mouser-spt/Rx.min.js').then(() => {
+                    import('./lib/TweenMax.min.js').then(() => {
+                        import('./lib/Rx.min.js').then(() => {
                             let App = /** @class */ (function () {
                                 function App(container) {
                                     let _this = this;
@@ -861,7 +874,7 @@
                         y: canvas.height / 2
                     };
                     let flames = [];
-                
+
                     /**
                      * Flame shapes constructor
                      */
@@ -874,7 +887,7 @@
                                 y: mouse.y
                             };
                         }
-                
+
                         flame.prototype.Draw = function(ctx) {
                             if (this.radius > 0) {
                                 ctx.beginPath();
@@ -882,17 +895,17 @@
                                 ctx.arc(this.position.x, this.position.y - 3 - 30 + this.radius * 3, this.radius, 0, Math.PI * 2, true);
                                 ctx.closePath();
                                 ctx.fill();
-                
+
                                 this.radius--;
                             } else {
                                 this.delete = true;
                             }
                         };
-                
+
                         return new flame();
                     };
-                
-                
+
+
                     /**
                      * Update mouse coordinates on moving
                      */
@@ -900,20 +913,20 @@
                         mouse.x = event.clientX;
                         mouse.y = event.clientY;
                     });
-                
+
                     /**
                      * Redraw canvas
                      */
                     function Update() {
                         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-                
+
                         // Draw background
                         ctx.beginPath();
                         ctx.fillStyle = "rgba(0,0,0,0)";
                         ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height);
                         ctx.closePath();
                         ctx.fill();
-                
+
                         // Draw highlight
                         let grad = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 200);
                         grad.addColorStop(0, "rgba(255,163,0,0.5)");
@@ -923,7 +936,7 @@
                         ctx.fillStyle = grad;
                         ctx.closePath();
                         ctx.fill();
-                
+
                         // Draw flames
                         for (let i = 0; i < flames.length; i++) {
                             if (flames[i].delete) {
@@ -933,10 +946,10 @@
                                 flames[i].Draw(ctx);
                             }
                         }
-                
+
                         window.requestAnimFrame(Update);
                     }
-                
+
                     // Start drawing
                     for (let i = 0; i < 10; i++) {
                         flames[i] = new Flame();
@@ -944,14 +957,14 @@
                     Update();
                     break;
                 case 7:
-                    import('./mouser-spt/anime.js').then(() => {
+                    import('./lib/anime.js').then(() => {
                         window.human = false;
                         let numberOfParticules = 30;
                         let pointerX = 0;
                         let pointerY = 0;
                         let tap = ('ontouchstart' in window || navigator.msMaxTouchPoints) ? 'touchstart' : 'mousedown';
                         let colors = $$this.options.colors;
-                        
+
                         function setCanvasSize() {
                             canvas.width = window.innerWidth * 2;
                             canvas.height = window.innerHeight * 2;
@@ -959,12 +972,12 @@
                             canvas.style.height = window.innerHeight + 'px';
                             canvas.getContext('2d').scale(2, 2);
                         }
-                        
+
                         function updateCoords(e) {
                             pointerX = e.clientX || e.touches[0].clientX;
                             pointerY = e.clientY || e.touches[0].clientY;
                         }
-                        
+
                         function setParticuleDirection(p) {
                             let angle = anime.random(0, 360) * Math.PI / 180;
                             let value = anime.random(50, 180);
@@ -974,7 +987,7 @@
                                 y: p.y + radius * Math.sin(angle)
                             }
                         }
-                        
+
                         function createParticule(x,y) {
                             let p = {};
                             p.x = x;
@@ -990,7 +1003,7 @@
                             }
                             return p;
                         }
-                        
+
                         function createCircle(x,y) {
                             let p = {};
                             p.x = x;
@@ -1010,13 +1023,13 @@
                             }
                             return p;
                         }
-                        
+
                         function renderParticule(anim) {
                             for (let i = 0; i < anim.animatables.length; i++) {
                                 anim.animatables[i].target.draw();
                             }
                         }
-                        
+
                         function animateParticules(x, y) {
                             let circle = createCircle(x, y);
                             let particules = [];
@@ -1039,7 +1052,7 @@
                                 alpha: {
                                     value: 0,
                                     easing: 'linear',
-                                    duration: anime.random(600, 800),  
+                                    duration: anime.random(600, 800),
                                 },
                                 duration: anime.random(1200, 1800),
                                 easing: 'easeOutExpo',
@@ -1047,125 +1060,151 @@
                                 offset: 0
                             });
                         }
-                        
+
                         let render = anime({
                             duration: Infinity,
                             update: function() {
                                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                             }
                         });
-                        
+
                         document.addEventListener(tap, function(e) {
                             window.human = true;
                             render.play();
                             updateCoords(e);
                             animateParticules(pointerX, pointerY);
                         }, false);
-                        
+
                         let centerX = window.innerWidth / 2;
                         let centerY = window.innerHeight / 2;
-                        
+
                         function autoClick() {
                             if (window.human) return;
                             animateParticules(
-                                anime.random(centerX-50, centerX+50), 
+                                anime.random(centerX-50, centerX+50),
                                 anime.random(centerY-50, centerY+50)
                             );
                             anime({duration: 200}).finished.then(autoClick);
                         }
-                        
+
                         autoClick();
                         setCanvasSize();
                         window.addEventListener('resize', setCanvasSize, false);
                     })
                     break;
                 case 8:
-                    import('./mouser-spt/dom-to-image.min.js').then(()=>{
-                        domtoimage.toPng(document.getElementById('app')).then((dataUrl) => {
-                            let offCanvas = document.getElementById('offCanvas');
-                            let offContext = offCanvas.getContext('2d');
-                            let image = new Image();
-                            let scale = 1.5;
-                            let isMouseDown = false;
-                            image.src = dataUrl;
-                            image.onload = function () {
-                                offCanvas.width = image.width * scale;
-                                offCanvas.height = image.height * scale;
-                                offContext.drawImage(image, 0, 0, offCanvas.width, offCanvas.height);
-                            }
-                        
-                            function windowToCanvas(x, y) {
-                                var bbox = canvas.getBoundingClientRect();
-                                return {
-                                    x: x - bbox.left,
-                                    y: y - bbox.top
+                    import('./lib/dom-to-image.min.js').then(()=>{
+                        $$this.options.multiDom = $$this.options.multiDom || document.getElementById('app');
+                        const drawMain = () => {
+                            domtoimage.toPng($$this.options.multiDom).then((dataUrl) => {
+                                let offCanvas = document.getElementById('offCanvas');
+                                let offContext = offCanvas.getContext('2d');
+                                let image = new Image();
+                                let scale = 1.5;
+                                let point;
+                                let isMouseDown = false;
+                                image.src = dataUrl;
+                                image.onload = function () {
+                                    offCanvas.width = image.width * scale;
+                                    offCanvas.height = image.height * scale;
+                                    offContext.drawImage(image, 0, 0, offCanvas.width, offCanvas.height);
                                 }
-                            }
-                        
-                            document.onmousedown = function (e) {
-                                e.preventDefault()
-                                isMouseDown = true;
-                                point = windowToCanvas(e.clientX, e.clientY);
-                                drawCanvasWithMagnifier(true, point)
-                            }
-                        
-                            document.onmouseup = function (e) {
-                                e.preventDefault()
-                                isMouseDown = false;
-                                drawCanvasWithMagnifier(false);
-                            }
-                        
-                            document.onmouseout = function (e) {
-                                e.preventDefault()
-                                isMouseDown = false
-                                drawCanvasWithMagnifier( false )
-                            }
-                        
-                            document.onmousemove = function (e) {
-                                e.preventDefault()
-                                if(isMouseDown){
-                                    point = windowToCanvas(e.clientX,e.clientY);
-                                    drawCanvasWithMagnifier(true,point);
+
+                                function windowToCanvas(x, y) {
+                                    var bbox = canvas.getBoundingClientRect();
+                                    return {
+                                        x: x - bbox.left,
+                                        y: y - bbox.top
+                                    }
                                 }
-                        
-                            }
-                        
-                            function drawCanvasWithMagnifier(isShowMagnifier, point) {
-                                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                                ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-                        
-                                if (isShowMagnifier) {
-                                    drawMagnifier(point);
+
+                                document.onmousedown = function (e) {
+                                    e.preventDefault()
+                                    isMouseDown = true;
+                                    point = windowToCanvas(e.clientX, e.clientY);
+                                    drawCanvasWithMagnifier(true, point)
                                 }
-                            }
-                        
-                            function drawMagnifier(point) {
-                                var mr = 200;
-                                //将缩小版图片上点击的位置映射到大图上
-                                var imageLG_cx = point.x*scale;
-                                var imageLG_cy = point.y*scale;
-                        
-                                //将大图上对应的点移动到圆心
-                                var sx = imageLG_cx - mr;
-                                var sy = imageLG_cy - mr;
-                        
-                                var dx = point.x - mr;
-                                var dy = point.y - mr;
-                        
-                                ctx.save();
-                                ctx.lineWidth = $$this.options.border?.width || 0;
-                                ctx.strokeStyle = $$this.options.border?.color || 'rgba(0,0,0,0)';
-                                ctx.beginPath();
-                                ctx.arc(point.x, point.y, mr,0, 2*Math.PI, false);
-                                ctx.stroke();
-                                ctx.clip();
-                                ctx.drawImage(offCanvas, sx, sy, 2*mr, 2*mr,dx,dy,2*mr,2*mr);
-                                ctx.closePath();
-                                ctx.restore();
-                            }
-                        }).catch(function (error) {
-                            console.error('oops, something went wrong!', error);
-                        });
+
+                                document.onmouseup = function (e) {
+                                    e.preventDefault()
+                                    isMouseDown = false;
+                                    drawCanvasWithMagnifier(false);
+                                }
+
+                                document.onmouseout = function (e) {
+                                    e.preventDefault()
+                                    isMouseDown = false
+                                    drawCanvasWithMagnifier( false )
+                                }
+
+                                document.onmousemove = function (e) {
+                                    e.preventDefault()
+                                    if(isMouseDown){
+                                        point = windowToCanvas(e.clientX,e.clientY);
+                                        drawCanvasWithMagnifier(true,point);
+                                    }
+
+                                }
+
+                                function drawCanvasWithMagnifier(isShowMagnifier, point) {
+                                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                                    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+                                    if (isShowMagnifier) {
+                                        drawMagnifier(point);
+                                    }
+                                }
+
+                                function drawMagnifier(point) {
+                                    var mr = 200;
+                                    //将缩小版图片上点击的位置映射到大图上
+                                    var imageLG_cx = point.x*scale;
+                                    var imageLG_cy = point.y*scale;
+
+                                    //将大图上对应的点移动到圆心
+                                    var sx = imageLG_cx - mr;
+                                    var sy = imageLG_cy - mr;
+
+                                    var dx = point.x - mr;
+                                    var dy = point.y - mr;
+
+                                    ctx.save();
+                                    ctx.lineWidth = $$this.options.border?.width || 0;
+                                    ctx.strokeStyle = $$this.options.border?.color || 'rgba(0,0,0,0)';
+                                    ctx.beginPath();
+                                    ctx.arc(point.x, point.y, mr,0, 2*Math.PI, false);
+                                    ctx.stroke();
+                                    ctx.clip();
+                                    ctx.drawImage(offCanvas, sx, sy, 2*mr, 2*mr,dx,dy,2*mr,2*mr);
+                                    ctx.closePath();
+                                    ctx.restore();
+                                }
+                            }).catch(function (error) {
+                                console.error('oops, something went wrong!', error);
+                            });
+                        }
+                        //如果需要放大的对象是画布或者子节点存在画布，需要判断画布是否绘制完毕
+                        const isTagCanvas = $$this.options.multiDom.tagName === 'canvas';
+                        const isChildCanvas = $$this.isInDom('canvas', $$this.options.multiDom, false);
+                        console.log(isTagCanvas, isChildCanvas);
+                        let isCanvasBlank = false;
+                        if (isTagCanvas || isChildCanvas) {
+                            console.log('暂不支持放大canvas节点')
+                            // let timer = setInterval(() => {
+                            //     if (isTagCanvas) {
+                            //         isCanvasBlank = $$this.isCanvasBlank($$this.options.multiDom)
+                            //     } else {
+                            //         isCanvasBlank = $$this.isCanvasBlank($$this.options.multiDom.getElementsByTagName('canvas')[0])
+                            //     }
+                            //     if (!isCanvasBlank) {
+                            //         drawMain();
+                            //         clearInterval(timer);
+                            //         timer = null;
+                            //     }
+                            // }, 3000);
+                        } else {
+                            drawMain();
+                        }
                     });
                     break;
                 default:

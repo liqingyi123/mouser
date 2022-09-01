@@ -30,6 +30,7 @@
 | number | 8000 | 点的数量(drawType为5时生效) |
 | colors | ['#FF1461', '#18FF92', '#5A87FF', '#FBF38C'] | 礼花颜色(drawType为7时生效) |
 | multi | 1.5 | 放大倍率(drawType为8时生效) |
+| multiDom | `document.getElementById('app')` | 需要放大的dom节点对象（暂不支持canvas或子节点包含canvas的节点） |
 | border | null | 放大镜镜框(drawType为8时生效) |
 
 #### 烹调方式
@@ -98,6 +99,7 @@ const mouseModels = {
         title: '放大镜',
         options: {
             multi: 1.5,
+            multiDom: document.getElementById('body'),
             border: {
                 width: 10,
                 color: '#069'
